@@ -6,19 +6,25 @@ d <- read.table('orange_small_train.data.gz',  	# Note: 1
                 header=T,
                 sep='\t',
                 na.strings=c('NA','')) 	# Note: 2 
+
 churn <- read.table('orange_small_train_churn.labels.txt',
                     header=F,sep='\t') 	# Note: 3 
+
 d$churn <- churn$V1 	# Note: 4 
+
 appetency <- read.table('orange_small_train_appetency.labels.txt',
                         header=F,sep='\t')
 d$appetency <- appetency$V1 	# Note: 5 
+
 upselling <- read.table('orange_small_train_upselling.labels.txt',
                         header=F,sep='\t')
 d$upselling <- upselling$V1 	# Note: 6 
+
 set.seed(729375) 	# Note: 7 
 d$rgroup <- runif(dim(d)[[1]])
 dTrainAll <- subset(d,rgroup<=0.9)
 dTest <- subset(d,rgroup>0.9) 	# Note: 8 
+
 outcomes=c('churn','appetency','upselling')
 vars <- setdiff(colnames(dTrainAll),
                 c(outcomes,'rgroup'))
@@ -26,7 +32,9 @@ catVars <- vars[sapply(dTrainAll[,vars],class) %in%
                   c('factor','character')] 	# Note: 9 
 numericVars <- vars[sapply(dTrainAll[,vars],class) %in%
                       c('numeric','integer')] 	# Note: 10 
+
 rm(list=c('d','churn','appetency','upselling')) 	# Note: 11 
+
 outcome <- 'churn' 	# Note: 12 
 pos <- '1' 	# Note: 13 
 useForCal <- rbinom(n=dim(dTrainAll)[[1]],size=1,prob=0.1)>0 	# Note: 14 
@@ -84,3 +92,32 @@ dTrain <- subset(dTrainAll,!useForCal)
 # Note 14: 
 #   Further split training data into training and 
 #   calibration. 
+
+
+############################################################################################################################
+
+# example 6.2 of section 6.2.1 
+# (example 6.2 of section 6.2.1)  : Memorization methods : Building single-variable models : Using categorical features 
+# Title: Plotting churn grouped by variable 218 levels 
+
+table218 <- table(
+  Var218=dTrain[,'Var218'], 	# Note: 1 
+  churn=dTrain[,outcome], 	# Note: 2 
+  useNA='ifany') 	# Note: 3 
+print(table218)
+##       churn
+## Var218    -1     1
+##   cJvF 19245  1220
+##   UYBR 17860  1618
+##   <NA>   423   152
+# Note this listing was updated: 10-14-2014 as some of results in the book were
+# accidentally from older code.  Will update later listings as we go forward.
+
+# Note 1: 
+#   Tabulate levels of Var218. 
+
+# Note 2: 
+#   Tabulate levels of churn outcome. 
+
+# Note 3: 
+#   Include NA values in tabulation. 
